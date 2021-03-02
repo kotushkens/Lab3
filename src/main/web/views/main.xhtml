@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <title>Главная страница</title>
+    <h:outputStylesheet library="css" name="main.css"/>
+</h:head>
+
+<h:body styleClass="background">
+    <ui:include src="tmp/header.xhtml"/>
+    <h:panelGroup layout="block" styleClass="link">
+        <h1><h:link value="Перейти на стартовую страницу" outcome="start"/></h1>
+    </h:panelGroup>
+    <h:panelGroup layout="block" styleClass="panel">
+        <h:panelGroup styleClass="img_frame" layout="block">
+            <h:panelGroup layout="block" styleClass="canvas_container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" >
+                    <line x1="0" y1="150" x2="300" y2="150" stroke="#000720"></line>
+                    <line x1="150" y1="0" x2="150" y2="300" stroke="#000720"></line>
+                    <line x1="270" y1="148" x2="270" y2="152" stroke="#000720"></line>
+                    <text x="265" y="140">R</text>
+                    <line x1="210" y1="148" x2="210" y2="152" stroke="#000720"></line>
+                    <text x="200" y="140">R/2</text>
+                    <line x1="90" y1="148" x2="90" y2="152" stroke="#000720"></line>
+                    <text x="75" y="140">-R/2</text>
+                    <line x1="30" y1="148" x2="30" y2="152" stroke="#000720"></line>
+                    <text x="20" y="140">-R</text>
+                    <line x1="148" y1="30" x2="152" y2="30" stroke="#000720"></line>
+                    <text x="156" y="35">R</text>
+                    <line x1="148" y1="90" x2="152" y2="90" stroke="#000720"></line>
+                    <text x="156" y="95">R/2</text>
+                    <line x1="148" y1="210" x2="152" y2="210" stroke="#000720"></line>
+                    <text x="156" y="215">-R/2</text>
+                    <line x1="148" y1="270" x2="152" y2="270" stroke="#000720"></line>
+                    <text x="156" y="275">-R</text>
+                    <polygon points="300,150 295,155 295, 145" fill="#000720" stroke="#000720"></polygon>
+                    <polygon points="150,0 145,5 155,5" fill="#000720" stroke="#3AAFA9"></polygon>
+                    <!--RECTANGLE-->
+                    <rect x="30" y="90" width="120" height="60" fill-opacity="0.4" stroke="#2b7a78" fill="#3AAFA9"></rect>
+                    <!--TRIANGLE-->
+                    <polygon points="90,150 150,270 150,150" fill-opacity="0.4" stroke="#2b7a78" fill="#3AAFA9"></polygon>
+                    <!--QUARTER-->
+                    <path d="M150 150 L 150 30 C 190 30 250 30 270 150 L Z" fill-opacity="0.4" stroke="#2b7a78" fill="#3AAFA9"></path>
+                    <!--DOT-->
+                    <circle id="pointer" r="5" cx="150" cy="150" fill-opacity="0.7" fill="white" stroke="firebrick"
+                            visibility="hidden"></circle>
+                </svg>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:panelGroup>
+    <h:panelGroup>
+        <h:panelGroup layout="block" styleClass="input_values">
+            <h4>Попадет ли точка в заданую область</h4>
+            <h:form id="form" styleClass="send_form">
+
+                <h:panelGroup layout="block" styleClass="coorX">
+                    <h:outputLabel value="X: "/>
+                    <div class="r">
+                        <p:spinner id="x" required="true" value="#{pointsBean.pointField.x}" min="-5" max="5" stepFactor="1"/>
+                    </div>
+
+                    <h:inputHidden id="x_select" name="coordinateX"/>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="y_zone">
+                    <h:outputLabel value="Y: "/>
+                    <h:inputText id="input_x"
+                                 autocomplete="off"
+                                 maxlength="6"
+                                 styleClass="coorY"
+                                 a:placeholder="Число в диапазоне (-3 ; 3)"
+                                 required="true"
+                                 converterMessage="Y должно быть числом"
+                                 validatorMessage="Y должно быть число (-3 ;3)"
+                                 value="#{pointsBean.pointField.y}">
+                    </h:inputText>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="coorR">
+                    <h:outputLabel value="R: "/>
+                    <div class="r">
+                        <p:spinner id="r" required="true" value="#{pointsBean.pointField.r}" min="1" max="3" stepFactor="0.5"/>
+                    </div>
+
+                    <h:inputHidden id="r_select" name="coordinateR"/>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block">
+                    <h:commandButton type="submit"
+                                     value="Отправить данные"
+                                     styleClass="send_button"
+                                     action="#{pointsBean.submitFieldPoints}"/>
+                </h:panelGroup>
+            </h:form>
+        </h:panelGroup>
+        <h:panelGroup layout="block"
+
+                      styleClass="result_table">
+            <h:dataTable id="result-table" value="#{pointsBean.pointsCollection}" var="point">
+                <f:event type="preRenderView" listener="#{pointsBean.uploadPoints}"/>
+                <h:column>
+                    <f:facet name="header">X</f:facet>
+                    ${point.x}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Y</f:facet>
+                    ${point.y}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">R</f:facet>
+                    ${point.r}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Результат</f:facet>
+                    ${point.result ? "Y" : "N"}
+                </h:column>
+            </h:dataTable>
+        </h:panelGroup>
+    </h:panelGroup>
+    <h:panelGroup layout="block" styleClass="hiddenForm">
+        <h:form style="display: none">
+            <h:inputText styleClass="x-hidden"
+                         value="#{pointsBean.pointGraphic.x}"/>
+            <h:inputText styleClass="y-hidden"
+                         value="#{pointsBean.pointGraphic.y}"/>
+            <h:inputText styleClass="r-hidden"
+                         value="#{pointsBean.pointGraphic.r}"/>
+            <h:commandButton
+                    type="submit"
+                    styleClass="hidden-submit-btn"
+                    action="#{pointsBean.submitGraphicPoints}"
+            />
+        </h:form>
+    </h:panelGroup>
+    <h:outputScript library="js" name="setPointer.js"/>
+</h:body>
+</html>
